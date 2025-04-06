@@ -60,50 +60,18 @@
 							</div>
 						</div>
 
-						@push('js')
+
+						@if (session('success'))
 							<script>
-								document.addEventListener('DOMContentLoaded', function() {
-									function addProductFormSubmit() {
-										let product_name = document.getElementById('product_name').value;
-										let product_price = document.getElementById('product_price').value;
-										let product_details = document.getElementById('product_details').value;
-
-										axios.post("{{ route('products.store') }}", {
-												product_name: product_name,
-												product_price: product_price,
-												product_details: product_details
-											})
-											.then(function(response) {
-												if (response.data.status == 200) {
-													$('#addProductModal').modal('hide');
-													document.getElementById('addProductForm').reset();
-													successToastify(response.data.message);
-												}
-											})
-											// .catch(function(error) {
-											// 	errorToastify(error.response.data.errors.product_name);
-											// });
-
-											.catch(function(error) {
-												if (error.response && error.response.data && error.response.data.errors) {
-													let errors = error.response.data.errors;
-													for (let key in errors) {
-														if (errors.hasOwnProperty(key)) {
-															errors[key].forEach(function(message) {
-																errorToastify(message);
-															});
-														}
-													}
-												}
-											});
-									}
-
-									// expose the function globally if needed
-									window.addProductFormSubmit = addProductFormSubmit;
-								});
+								successToastify("{{ session('success') }}");
 							</script>
-						@endpush
+						@endif
 
+						@if (session('error'))
+							<script>
+								errorToastify("{{ session('error') }}");
+							</script>
+						@endif
 
 
 						<div class="card-body">
@@ -128,29 +96,8 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-		<script>
-			function successToastify(message) {
-				Toastify({
-					text: message,
-					duration: 900,
-					gravity: "bottom",
-					position: 'center',
-					backgroundColor: "#00b09b",
-				}).showToast();
-			}
-
-			function errorToastify(message) {
-				Toastify({
-					text: message,
-					duration: 900,
-					gravity: "bottom",
-					position: 'center',
-					backgroundColor: "#FF0000",
-				}).showToast();
-			}
-		</script>
-
-		@stack('js')
+		<script src="{{ mix('js/product.js') }}"></script>
+		<script src="{{ mix('js/toastifyHelper.js') }}"></script>
 
 	</body>
 
