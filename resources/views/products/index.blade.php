@@ -9,6 +9,7 @@
 
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
 	</head>
 
 	<body>
@@ -60,32 +61,20 @@
 							</div>
 						</div>
 
-
-						@if (session('success'))
-							<script>
-								successToastify("{{ session('success') }}");
-							</script>
-						@endif
-
-						@if (session('error'))
-							<script>
-								errorToastify("{{ session('error') }}");
-							</script>
-						@endif
-
-
 						<div class="card-body">
-							<table class="table table-bordered table-striped" id="productTable">
+							<table id="productTable" class="table table-bordered table-striped">
 								<thead>
 									<tr>
-										<th>ID</th>
+										<th>#</th>
 										<th>Name</th>
 										<th>Price</th>
+										<th>Details</th>
 										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody id="productList"></tbody>
 							</table>
+
 						</div>
 					</div>
 				</div>
@@ -96,8 +85,11 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-		<script src="{{ mix('js/product.js') }}"></script>
+		<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+
 		<script src="{{ mix('js/toastifyHelper.js') }}"></script>
+		<script src="{{ mix('js/product.js') }}"></script>
 
 	</body>
 
