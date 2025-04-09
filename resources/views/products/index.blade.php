@@ -39,6 +39,8 @@
 									</div>
 									<div class="modal-body">
 										<form id="addProductForm">
+											<input type="hidden" id="product_id">
+
 											<div class="mb-3">
 												<label for="product_name" class="form-label">Product Name</label>
 												<input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name">
@@ -53,7 +55,7 @@
 											</div>
 											<div class="mb-3">
 												<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-												<button type="button" class="btn btn-success" onclick="addProductFormSubmit()">Add Product</button>
+												<button type="button" class="btn btn-success" id="addProductFormSubmitButton" onclick="addProductFormSubmit()">Add Product</button>
 											</div>
 										</form>
 									</div>
@@ -75,6 +77,9 @@
 								<tbody id="productList"></tbody>
 							</table>
 
+
+
+
 						</div>
 					</div>
 				</div>
@@ -90,6 +95,7 @@
 
 		<script src="{{ mix('js/toastifyHelper.js') }}"></script>
 		<script src="{{ mix('js/product.js') }}"></script>
+
 
 	</body>
 

@@ -11,16 +11,16 @@ function getList() {
   return _getList.apply(this, arguments);
 }
 function _getList() {
-  _getList = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+  _getList = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
     var response, products, productTable, productList;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          _context2.prev = 0;
-          _context2.next = 3;
+          _context4.prev = 0;
+          _context4.next = 3;
           return axios.get("/get-products");
         case 3:
-          response = _context2.sent;
+          response = _context4.sent;
           products = response.data;
           productTable = $("#productTable");
           productList = $("#productList");
@@ -35,64 +35,184 @@ function _getList() {
             productList.append("<tr><td colspan=\"5\" class=\"text-center\">No products found</td></tr>");
           }
           productTable.DataTable({
-            order: [[0, "desc"]],
+            // order: [[0, "desc"]],
             lengthMenu: [5, 10, 25, 50]
           });
-          _context2.next = 16;
+          _context4.next = 16;
           break;
         case 13:
-          _context2.prev = 13;
-          _context2.t0 = _context2["catch"](0);
+          _context4.prev = 13;
+          _context4.t0 = _context4["catch"](0);
           errorToastify("Failed to fetch product list!");
         case 16:
         case "end":
-          return _context2.stop();
+          return _context4.stop();
       }
-    }, _callee2, null, [[0, 13]]);
+    }, _callee4, null, [[0, 13]]);
   }));
   return _getList.apply(this, arguments);
 }
-window.addProductFormSubmit = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-  var product_name, product_price, product_details, response, _error$response, errors;
-  return _regeneratorRuntime().wrap(function _callee$(_context) {
-    while (1) switch (_context.prev = _context.next) {
+var isEditMode = false;
+window.editProduct = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(productId) {
+    var response;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return axios.get("/products/" + productId);
+        case 3:
+          response = _context.sent;
+          $("#product_name").val(response.data.data.product_name);
+          $("#product_price").val(response.data.data.product_price);
+          $("#product_details").val(response.data.data.product_details);
+          isEditMode = true; // edit mode on
+          $("#product_id").val(productId);
+
+          // $("#addProductModalLabel").html("Edit Product");
+          // $("#addProductFormSubmitButton").html("Update Product");
+
+          $("#addProductModal").modal("show");
+          _context.next = 15;
+          break;
+        case 12:
+          _context.prev = 12;
+          _context.t0 = _context["catch"](0);
+          errorToastify("Failed to fetch product data.!");
+        case 15:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[0, 12]]);
+  }));
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+// Modal close and reset the form after closing
+var modalElement = document.getElementById("addProductModal");
+var modal = new bootstrap.Modal(modalElement);
+modalElement.addEventListener("hidden.bs.modal", function () {
+  document.getElementById("addProductForm").reset();
+  document.getElementById("product_id").value = "";
+  $("#addProductModalLabel").html("Add Product");
+  $("#addProductFormSubmitButton").html("Add Product");
+  isEditMode = false; // Reset to add mode
+});
+window.addProductFormSubmit = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+  var product_name, product_price, product_details, product_id, response, _error$response, errors;
+  return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+    while (1) switch (_context2.prev = _context2.next) {
       case 0:
         product_name = document.getElementById("product_name").value;
         product_price = document.getElementById("product_price").value;
         product_details = document.getElementById("product_details").value;
-        _context.prev = 3;
-        _context.next = 6;
+        product_id = document.getElementById("product_id").value;
+        _context2.prev = 4;
+        if (!(isEditMode && product_id)) {
+          _context2.next = 11;
+          break;
+        }
+        _context2.next = 8;
+        return axios.put("/products/" + product_id, {
+          product_name: product_name,
+          product_price: product_price,
+          product_details: product_details
+        });
+      case 8:
+        response = _context2.sent;
+        _context2.next = 14;
+        break;
+      case 11:
+        _context2.next = 13;
         return axios.post("/products", {
           product_name: product_name,
           product_price: product_price,
           product_details: product_details
         });
-      case 6:
-        response = _context.sent;
-        if (response.data.status === true) {
-          $("#addProductModal").modal("hide");
-          document.getElementById("addProductForm").reset();
-          getList();
-          successToastify(response.data.message);
+      case 13:
+        response = _context2.sent;
+      case 14:
+        if (!(response.data.status === true)) {
+          _context2.next = 22;
+          break;
         }
-        _context.next = 13;
+        $("#addProductModal").modal("hide");
+        document.getElementById("addProductForm").reset();
+        document.getElementById("product_id").value = "";
+        isEditMode = false;
+        _context2.next = 21;
+        return getList();
+      case 21:
+        successToastify(response.data.message);
+      case 22:
+        _context2.next = 27;
         break;
-      case 10:
-        _context.prev = 10;
-        _context.t0 = _context["catch"](3);
-        if ((_error$response = _context.t0.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.errors) {
-          errors = _context.t0.response.data.errors;
+      case 24:
+        _context2.prev = 24;
+        _context2.t0 = _context2["catch"](4);
+        if ((_error$response = _context2.t0.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.errors) {
+          errors = _context2.t0.response.data.errors;
           Object.values(errors).flat().forEach(function (msg) {
             return errorToastify(msg);
           });
         } else {
           errorToastify("Something went wrong!");
         }
-      case 13:
+      case 27:
       case "end":
-        return _context.stop();
+        return _context2.stop();
     }
-  }, _callee, null, [[3, 10]]);
+  }, _callee2, null, [[4, 24]]);
 }));
+window.deleteProduct = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(productId) {
+    var confirmDelete, response;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          confirmDelete = confirm("Are you sure you want to delete this product?");
+          if (confirmDelete) {
+            _context3.next = 3;
+            break;
+          }
+          return _context3.abrupt("return");
+        case 3:
+          _context3.prev = 3;
+          _context3.next = 6;
+          return axios["delete"]("/products/" + productId);
+        case 6:
+          response = _context3.sent;
+          if (!(response.data.success === true)) {
+            _context3.next = 13;
+            break;
+          }
+          _context3.next = 10;
+          return getList();
+        case 10:
+          successToastify(response.data.message);
+          _context3.next = 14;
+          break;
+        case 13:
+          errorToastify(response.data.message);
+        case 14:
+          _context3.next = 19;
+          break;
+        case 16:
+          _context3.prev = 16;
+          _context3.t0 = _context3["catch"](3);
+          errorToastify("Something went wrong!");
+        case 19:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[3, 16]]);
+  }));
+  return function (_x2) {
+    return _ref3.apply(this, arguments);
+  };
+}();
 /******/ })()
 ;
